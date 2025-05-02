@@ -10,9 +10,9 @@ const port = 5000
 app.set('trust proxy', true);
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://yourdomain.com' 
-    : 'http://localhost:3000',
+  origin: process.env.NODE_ENV === 'production'
+  ? 'https://personalblog-x8vq.onrender.com'
+  : 'http://localhost:3000',
   credentials: true
 }));
 
