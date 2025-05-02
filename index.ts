@@ -1,10 +1,13 @@
 import express, { Request, Response } from 'express'
+import cors from 'cors';
 import { Client } from '@notionhq/client'
 import dotenv from 'dotenv'
 dotenv.config()
 
 const app = express()
 const port = 5000
+
+app.use(cors());
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 const databaseId = process.env.NOTION_DATABASE_ID!
