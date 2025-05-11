@@ -19,41 +19,28 @@ app.use(cors({
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 const databaseId = process.env.NOTION_DATABASE_ID!
 
-let cache: any = null;
-let cacheTimestamp: number = 0;
-const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
-
 app.get('/posts', async (req: Request, res: Response) => {
-    const now = Date.now();
+    const start = parseInt(req.query.start as string) || 0
+    const limit = parseInt(req.query.limit as string) || 10
 
-    // If cache exists and is fresh, serve from cache
-    if (cache && now - cacheTimestamp < CACHE_DURATION_MS) {
-        console.log('Serving posts from cache.');
-        const start = parseInt(req.query.start as string) || 0;
-        const limit = parseInt(req.query.limit as string) || 10;
-        return res.json(cache.slice(start, start + limit));
-    }
-
-    // Otherwise, fetch from Notion API
-    console.log('Fetching posts from Notion.');
     const response = await notion.databases.query({
         database_id: databaseId,
         sorts: [{ property: 'Date', direction: 'descending' }],
         page_size: 100
     });
 
-
     const allPosts = response.results
         .filter((page: any) => page.properties.Published.checkbox)
         .sort((a: any, b: any) => {
-            const dateA = a.properties.Date?.date?.start;
-            const dateB = b.properties.Date?.date?.start;
-
-            if (!dateA && !dateB) return 0;
-            if (!dateA) return 1;
-            if (!dateB) return -1;
-
-            return new Date(dateB).getTime() - new Date(dateA).getTime();
+            const dateA = a.properties.Date?.date?.start
+            const dateB = b.properties.Date?.date?.start
+          
+            // Push null dates to the end
+            if (!dateA && !dateB) return 0
+            if (!dateA) return 1
+            if (!dateB) return -1
+          
+            return new Date(dateB).getTime() - new Date(dateA).getTime()
         })
         .map((page: any) => ({
             id: page.id,
@@ -62,16 +49,11 @@ app.get('/posts', async (req: Request, res: Response) => {
             published: true,
             date: page.properties.Date?.date?.start || 'No date',
             slug: page.properties.Slug.rich_text[0]?.plain_text || 'No slug'
-        }));
+        }))
 
-    // Update cache
-    cache = allPosts;
-    cacheTimestamp = now;
+    const visiblePosts = allPosts.slice(start, start + limit)
 
-    const start = parseInt(req.query.start as string) || 0;
-    const limit = parseInt(req.query.limit as string) || 10;
-    res.json(allPosts.slice(start, start + limit));
-    
+    res.json(visiblePosts)
 });
 
 app.listen(port, '0.0.0.0', () => {
