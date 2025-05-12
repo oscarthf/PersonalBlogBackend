@@ -56,6 +56,13 @@ app.get('/posts', async (req: Request, res: Response) => {
     res.json(visiblePosts)
 });
 
+function sanitizeQuotes(html: string): string {
+    // Replace smart quotes with standard quotes
+    return html
+        .replace(/[“”]/g, '"')  // Double smart quotes → "
+        .replace(/[‘’]/g, "'"); // Single smart quotes → '
+}
+
 app.get('/section', async (req: Request, res: Response) => {
     const section = (req.query.name as string);
     const sectionDatabaseId = process.env.NOTION_SECTIONS_DATABASE_ID!;
@@ -73,9 +80,13 @@ app.get('/section', async (req: Request, res: Response) => {
 
     const page: any = response.results[0];
 
-    const htmlContent = page.properties.HTMLContent?.rich_text[0]?.plain_text || '';
+    const htmlContent = page.properties.HTMLContent?.rich_text
+            ?.map((block: any) => block.plain_text)
+            .join('') || '';
 
-    res.json({ html: htmlContent });
+    const sanitizedHTML = sanitizeQuotes(htmlContent);
+
+    res.json({ html: sanitizedHTML });
 
 });
 
