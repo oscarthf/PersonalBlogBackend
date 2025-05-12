@@ -17,7 +17,7 @@ app.use(cors({
 }));
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
-const databaseId = process.env.NOTION_DATABASE_ID!
+const databaseId = process.env.NOTION_POSTS_DATABASE_ID!
 
 app.get('/posts', async (req: Request, res: Response) => {
     const start = parseInt(req.query.start as string) || 0
@@ -55,6 +55,30 @@ app.get('/posts', async (req: Request, res: Response) => {
 
     res.json(visiblePosts)
 });
+
+app.get('/section', async (req: Request, res: Response) => {
+    const section = (req.query.name as string);
+    const sectionDatabaseId = process.env.NOTION_SECTIONS_DATABASE_ID!;
+
+    const response = await notion.databases.query({
+        database_id: sectionDatabaseId,
+        filter: {
+            property: 'Section',
+            rich_text: {
+                equals: section
+            }
+        },
+        page_size: 1
+    });
+
+    const page: any = response.results[0];
+
+    const htmlContent = page.properties.HTMLContent?.rich_text[0]?.plain_text || '';
+
+    res.json({ html: htmlContent });
+
+});
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${port}`);
