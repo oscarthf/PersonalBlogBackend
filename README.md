@@ -53,10 +53,12 @@ PRODUCTION_URL=<PRODUCTION_URL>
     * Select the new table and rename it to Sections.
     * Add the following properties (and types):
         * Name (title)
-        * HTMLContent (text)
         * Section (text)
+        * Header (text)
+        * Content (text)
     * Currently the sections are hardcoded in the frontend (["home", "blog", "about"]), but this will be changed in the future.
-4. Make sure to remove any smart links in the Notion database. Links will work as long as you select the text in Notion and click "Remove link" in the menu. You should not be able to click the link when editing in Notion.
+4. Currenty the header and content may contain breaks using "\n" and links using the format:
+    [Display text](https://www.yourpage.com)
 ```
 
 ## For Local Deployment (With Docker):
