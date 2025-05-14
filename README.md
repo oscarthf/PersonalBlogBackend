@@ -12,7 +12,7 @@ Notion CMS for blog posts
 ## To do:
 
 ```
-0. Add caching for Notion API requests.
+0. Add caching for Notion API requests. (LOW PRIORITY, EASY)
 ```
 
 ## Environment Variables needed:
@@ -57,7 +57,7 @@ PRODUCTION_URL=<PRODUCTION_URL>
         * Header (text)
         * Content (text)
     * Currently the sections are hardcoded in the frontend (["home", "blog", "about"]), but this will be changed in the future.
-4. Currenty the header and content may contain breaks using "\n" and links using the format:
+4. Currenty the header and content may contain using the format:
     [Display text](https://www.yourpage.com)
 ```
 
