@@ -37,10 +37,10 @@ app.get('/posts', async (req: Request, res: Response) => {
           
             // Push null dates to the end
             if (!dateA && !dateB) return 0
-            if (!dateA) return 1
-            if (!dateB) return -1
+            if (!dateA) return -1
+            if (!dateB) return 1
           
-            return new Date(dateB).getTime() - new Date(dateA).getTime()
+            return new Date(dateA).getTime() - new Date(dateB).getTime()
         })
         .map((page: any) => ({
             id: page.id,
@@ -60,26 +60,29 @@ app.get('/section', async (req: Request, res: Response) => {
     const section = (req.query.name as string);
     const sectionDatabaseId = process.env.NOTION_SECTIONS_DATABASE_ID!;
 
+    const sanitizedSection = section.replace(/[^a-zA-Z0-9]/g, ''); // Sanitize the section name
+    if (sanitizedSection.length === 0) {
+        // return res.status(400).json({ error: 'Invalid section name' });
+        res.json({
+            name: 'No title',
+            header: 'No header',
+            content: 'No content'
+        });
+        return;
+    }
+
     const response = await notion.databases.query({
         database_id: sectionDatabaseId,
         filter: {
             property: 'Section',
             rich_text: {
-                equals: section
+                equals: sanitizedSection
             }
         },
         page_size: 1
     });
 
     const page: any = response.results[0];
-
-    // const htmlContent = page.properties.HTMLContent?.rich_text
-    //         ?.map((block: any) => block.plain_text)
-    //         .join('') || '';
-
-    // const sanitizedHTML = sanitizeQuotes(htmlContent);
-
-    // res.json({ html: sanitizedHTML });
 
     const nameProperty = page.properties.Name.title[0]?.plain_text || 'No title';
     const headerProperty = page.properties.Header.rich_text[0]?.plain_text || 'No header';
