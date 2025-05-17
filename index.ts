@@ -62,7 +62,13 @@ app.get('/section', async (req: Request, res: Response) => {
 
     const sanitizedSection = section.replace(/[^a-zA-Z0-9]/g, ''); // Sanitize the section name
     if (sanitizedSection.length === 0) {
-        return res.status(400).json({ error: 'Invalid section name' });
+        // return res.status(400).json({ error: 'Invalid section name' });
+        res.json({
+            name: 'No title',
+            header: 'No header',
+            content: 'No content'
+        });
+        return;
     }
 
     const response = await notion.databases.query({
