@@ -37,10 +37,10 @@ app.get('/posts', async (req: Request, res: Response) => {
           
             // Push null dates to the end
             if (!dateA && !dateB) return 0
-            if (!dateA) return -1
-            if (!dateB) return 1
+            if (!dateA) return 1
+            if (!dateB) return -1
           
-            return new Date(dateA).getTime() - new Date(dateB).getTime()
+            return new Date(dateB).getTime() - new Date(dateA).getTime()
         })
         .map((page: any) => ({
             id: page.id,
