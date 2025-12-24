@@ -6,10 +6,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@notionhq/client": "^5.6.0",
+    "@notionhq/client": "^2.2.15",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
