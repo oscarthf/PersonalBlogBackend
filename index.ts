@@ -27,7 +27,7 @@ app.get('/posts', async (req: Request, res: Response) => {
         database_id: databaseId,
         sorts: [{ property: 'Date', direction: 'descending' }],
         page_size: 100
-    });
+    } as any);
 
     const allPosts = response.results
         .filter((page: any) => page.properties.Published.checkbox)
@@ -78,6 +78,10 @@ app.get('/section', async (req: Request, res: Response) => {
             rich_text: {
                 equals: sanitizedSection
             }
+        } as any
+    } as any);
+
+    if (response.results.length === 0) {
         },
         page_size: 1
     });
