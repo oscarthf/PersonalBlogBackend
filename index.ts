@@ -82,6 +82,15 @@ app.get('/section', async (req: Request, res: Response) => {
         page_size: 1
     });
 
+    if (response.results.length === 0) {
+        res.json({
+            name: 'No title',
+            header: 'No header',
+            content: 'No content'
+        });
+        return;
+    }
+
     const page: any = response.results[0];
 
     const nameProperty = page.properties.Name.title[0]?.plain_text || 'No title';
