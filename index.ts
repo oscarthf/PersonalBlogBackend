@@ -23,13 +23,10 @@ app.get('/posts', async (req: Request, res: Response) => {
     const start = parseInt(req.query.start as string) || 0
     const limit = parseInt(req.query.limit as string) || 10
 
-    const response: any = await notion.request({
-        path: `databases/${databaseId}/query`,
-        method: 'post',
-        body: {
-            sorts: [{ property: 'Date', direction: 'descending' }],
-            page_size: 100
-        }
+    const response = await notion.databases.query({
+        database_id: databaseId,
+        sorts: [{ property: 'Date', direction: 'descending' }],
+        page_size: 100
     });
 
     const allPosts = response.results
@@ -74,18 +71,15 @@ app.get('/section', async (req: Request, res: Response) => {
         return;
     }
 
-    const response: any = await notion.request({
-        path: `databases/${sectionDatabaseId}/query`,
-        method: 'post',
-        body: {
-            filter: {
-                property: 'Section',
-                rich_text: {
-                    equals: sanitizedSection
-                }
-            },
-            page_size: 1
-        }
+    const response = await notion.databases.query({
+        database_id: sectionDatabaseId,
+        filter: {
+            property: 'Section',
+            rich_text: {
+                equals: sanitizedSection
+            }
+        },
+        page_size: 1
     });
 
     if (response.results.length === 0) {
